@@ -20,6 +20,10 @@ const App = () => {
 	const addGood = () => setGood(good + 1)
 	const addNeutral = () => setNeutral(neutral + 1)
 	const addBad = () => setBad(bad + 1)
+	const All = () => (good + neutral + bad)
+	const Avg = () => ((good - bad) / (good  + neutral + bad))
+	const Positive = () => 
+		((100 * (good / (good + neutral + bad))).toString() + '%')
 	
 	return (
 		<div>
@@ -31,6 +35,9 @@ const App = () => {
 			<Stats statText='good' statNum={good} />
 			<Stats statText='neutral' statNum={neutral} />
 			<Stats statText='bad' statNum={bad} />
+			<Stats statText='All' statNum={All()} />
+			<Stats statText='Average' statNum={Avg()} />
+			<Stats statText='Positive' statNum={Positive()} />
 		</div>
 	)
 }
