@@ -1,69 +1,46 @@
-import React from 'react'
+import React, { useState} from 'react'
 import ReactDOM from 'react-dom'
 
-const Header = (props) => {
-	return (
-		<div>
-			<h1>{props.course.name}</h1>
-		</div>
-	)
-}
+const Header = ({headerText}) => (<h1>{headerText}</h1>)	
 
-const Part = (props) => {
-	return(
-		<div>
-			<p>
-				{props.part} {props.exercises}
-			</p>
-		</div>	
-	)
-}
+const Button =({ onClick, text }) => (
+	<button onClick={onClick}>	
+		{text}
+	</button>
+)
 
-const Content = (props) => {
-	return (
-		<div>
-			<Part part={props.course.parts[0].name} exercises={props.course.parts[0].exercises}/>
-			<Part part={props.course.parts[1].name} exercises={props.course.parts[1].exercises}/>
-			<Part part={props.course.parts[2].name} exercises={props.course.parts[2].exercises}/>
-		</div>
-	)
-}
-
-const Total = (props) => {
-	return (
-		<div>
-			<p>Number of exercise {props.course.parts[0].exercises + props.course.parts[1].exercises + props.course.parts[2].exercises}</p>
-		</div>
-	)
-}
-
+const Stats = ({ statText, statNum }) => (<p>{statText} {statNum}</p>)
+	
 const App = () => {
-  const course = {
-	name: 'Half Stack application development',
-	parts: [
-		{
-			name: 'Fundamentals of react',
-			exercises: 10
-		},
-		{
-			name: 'Using props to pass data',
-			exercises: 7
-		},  
-		{
-			name: 'State of a component',
-			exercises: 14
-		}
-	]
-  }
-
-  return (
-    <div>
-	  <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
-    </div>
-  )
+	// Save clicks of each button to own state
+	const [good, setGood] = useState(0)
+	const [neutral, setNeutral] = useState(0)
+	const [bad, setBad] = useState(0)
+	
+	const addGood = () => setGood(good + 1)
+	const addNeutral = () => setNeutral(neutral + 1)
+	const addBad = () => setBad(bad + 1)
+	
+	return (
+		<div>
+			<Header headerText='give feedback' />
+			<Button onClick={addGood} text='good' />
+			<Button onClick={addNeutral} text='neutral' />
+			<Button onClick={addBad} text='bad' />
+			<Header headerText='statistics' />
+			<Stats statText='good' statNum={good} />
+			<Stats statText='neutral' statNum={neutral} />
+			<Stats statText='bad' statNum={bad} />
+		</div>
+	)
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(
+	<App />,
+	document.getElementById('root')
+)
+
+
+
+
 
