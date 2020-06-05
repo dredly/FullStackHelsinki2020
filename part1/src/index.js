@@ -9,6 +9,7 @@ const Button =({ onClick, text }) => (
 	</button>
 )
 
+// Already refactored
 const Stats = ({ statText, statNum }) => (<p>{statText} {statNum}</p>)
 	
 const App = () => {
