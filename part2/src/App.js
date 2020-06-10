@@ -1,89 +1,83 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Person = ({personObj}) => (<div>{personObj.name} {personObj.number}</div>)
+const Country = ({countryObj}) => (<div>{countryObj.name}</div>)
 
 const Filter = ({ searchTerm, handleSearch }) => (
 	<div>
-		filter shown with: <input value={searchTerm} onChange={handleSearch} />
+		find countries: <input value={searchTerm} onChange={handleSearch} />
 	</div>
 )
 
-const Form = ({ addPerson, newName, handlePerson, newNumber, handleNumber }) => (
-	<form onSubmit={addPerson}>
-		<div>
-			name: <input value={newName} onChange={handlePerson}/>
-		</div>
-		<div>
-			number: <input value={newNumber} onChange={handleNumber}/>
-		</div>
-		<div>
-			<button type="submit">add</button>
-		</div>
-	</form>
+const CountryInfo =({countryObj}) => (
+	<div>
+		<h1>{countryObj.name}</h1>
+		<div>capital {countryObj.capital}</div>
+		<div>population {countryObj.population}</div>
+		<h2>Languages</h2>
+		<ul>
+			{countryObj.languages.map(language => 
+				<li key={language.iso639_2}>{language.name}</li>)}
+		</ul>
+		<img src={countryObj.flag} alt={`${countryObj.demonym} flag`} 
+			width="150" />
+	</div>
 )
 
+const SearchResults = ({countriesToShow}) => {
+	if (countriesToShow.length <= 10) {
+		if (countriesToShow.length > 1) {
+			return(
+				<div>
+					{countriesToShow.map(country => <Country key={country.alpha3Code} countryObj={country} />)}
+				</div>
+			)
+		}
+		else if (countriesToShow.length === 1) {
+			const countryObj = countriesToShow[0]
+			return(
+				<CountryInfo countryObj={countryObj} />
+			)
+		}
+		else {
+			return(<div>No matches</div>)
+		}
+	}
+	else {
+		return(<div>Too many matches, specify another filter</div>)
+	}
+}
+
 const App = () => {
-	const [ persons, setPersons ] = useState([])
-	const [ newNumber, setNewNumber ] = useState('')
-	const [ newName, setNewName ] = useState('')
+	const [ countries, setCountries ] = useState([])
 	const [ searchTerm, setSearchTerm ] = useState('')
 	
 	const hook = () => {
 		console.log('effect')
 		axios
-			.get('http://localhost:3001/persons')
+			.get('https://restcountries.eu/rest/v2/all')
 			.then(response => {
 				console.log('promise fulfilled')
-				setPersons(response.data)
+				setCountries(response.data)
 			})
 	}
 	
 	useEffect(hook, [])
-	
-	const addPerson = (event) => {
-		const nameList = persons.map(person => person.name)
-		console.log(nameList)
-		event.preventDefault()
-		if (!nameList.includes(newName)) { 
-			const personObject = {
-				name: newName,
-				number: newNumber,
-			}
-			setPersons(persons.concat(personObject))
-			setNewName('')
-			setNewNumber('')
-		}
-		else {window.alert(`${newName} is already added to phonebook`)}
-	}
-	
-	const handlePerson = (event) => {
-		console.log(event.target.value)
-		setNewName(event.target.value)
-	}
-	
-	const handleNumber = (event) => {
-		console.log(event.target.value)
-		setNewNumber(event.target.value)
-	}
+	console.log(countries)
 	
 	const handleSearch = (event) => {
 		console.log(event.target.value)
 		setSearchTerm(event.target.value)
 	}
 	
-	const personsToShow = persons.filter(person => person.name.includes(searchTerm))
-		console.log(personsToShow)
+	const countriesToShow = countries.filter(country => country.name.includes(searchTerm))
+		console.log(countriesToShow)
+	
 	
 	return (
 		<div>
-			<h2>Phonebook</h2>
 			<Filter searchTerm={searchTerm} handleSearch={handleSearch} />
-			<h2>add a new</h2>
-			<Form addPerson={addPerson} newName={newName} handlePerson={handlePerson} 
-				newNumber={newNumber} handleNumber={handleNumber}/>
-			<h2>Numbers</h2>
-				{personsToShow.map(person => <Person key={person.name} personObj={person} />)}
+			<SearchResults countriesToShow={countriesToShow} />
 		</div>
 	)	
 }
