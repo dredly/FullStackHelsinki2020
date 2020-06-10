@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Person = ({personObj}) => (<div>{personObj.name} {personObj.number}</div>)
 
@@ -23,12 +24,22 @@ const Form = ({ addPerson, newName, handlePerson, newNumber, handleNumber }) => 
 )
 
 const App = () => {
-	const [ persons, setPersons ] = useState([
-		{ name: 'Arto Hellas', number: '040-1234567' },
-	])
+	const [ persons, setPersons ] = useState([])
 	const [ newNumber, setNewNumber ] = useState('')
 	const [ newName, setNewName ] = useState('')
 	const [ searchTerm, setSearchTerm ] = useState('')
+	
+	const hook = () => {
+		console.log('effect')
+		axios
+			.get('http://localhost:3001/persons')
+			.then(response => {
+				console.log('promise fulfilled')
+				setPersons(response.data)
+			})
+	}
+	
+	useEffect(hook, [])
 	
 	const addPerson = (event) => {
 		const nameList = persons.map(person => person.name)
