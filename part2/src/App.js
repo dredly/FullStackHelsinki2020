@@ -3,6 +3,30 @@ import axios from 'axios'
 
 const Country = ({countryObj}) => (<div>{countryObj.name}</div>)
 
+const CountryCollapsed = ({countryObj, expanded, setExpanded}) => {
+	
+	return (
+		<div>
+			{`${countryObj.name} `}  
+			<button onClick={() => setExpanded(expanded.concat({countryObj}))} >
+				show
+			</button>
+		</div>
+	)
+}
+
+const CountryExpanded =({ countryObj, expanded }) => {
+	const countryName = countryObj.name
+	const countryNames = expanded.map(country => country.countryObj.name)	
+	if (countryNames.includes(countryName)) {
+		return(<CountryInfo countryObj={countryObj} />)	
+	}
+	else {
+		return(<></>)
+	}
+		
+}
+
 const Filter = ({ searchTerm, handleSearch }) => (
 	<div>
 		find countries: <input value={searchTerm} onChange={handleSearch} />
@@ -25,11 +49,19 @@ const CountryInfo =({countryObj}) => (
 )
 
 const SearchResults = ({countriesToShow}) => {
+	const [ expanded, setExpanded ] = useState([])
+	console.log(expanded)
+	
 	if (countriesToShow.length <= 10) {
 		if (countriesToShow.length > 1) {
 			return(
 				<div>
-					{countriesToShow.map(country => <Country key={country.alpha3Code} countryObj={country} />)}
+					{countriesToShow.map(country => (
+					<div key={country.alpha3Code}>	
+						<CountryCollapsed countryObj={country} expanded={expanded} setExpanded={setExpanded} />
+						<CountryExpanded countryObj={country} expanded={expanded} />
+					</div>
+					))}
 				</div>
 			)
 		}
@@ -72,7 +104,6 @@ const App = () => {
 	
 	const countriesToShow = countries.filter(country => country.name.includes(searchTerm))
 		console.log(countriesToShow)
-	
 	
 	return (
 		<div>
