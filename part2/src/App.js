@@ -33,20 +33,56 @@ const Filter = ({ searchTerm, handleSearch }) => (
 	</div>
 )
 
-const CountryInfo =({countryObj}) => (
-	<div>
-		<h1>{countryObj.name}</h1>
-		<div>capital {countryObj.capital}</div>
-		<div>population {countryObj.population}</div>
-		<h2>Languages</h2>
-		<ul>
-			{countryObj.languages.map(language => 
-				<li key={language.iso639_2}>{language.name}</li>)}
-		</ul>
-		<img src={countryObj.flag} alt={`${countryObj.demonym} flag`} 
-			width="150" />
-	</div>
-)
+const CountryInfo =({countryObj}) => {
+	const [ weather, setWeather ] = useState([])
+	const api_key = process.env.REACT_APP_API_KEY
+	const weatherLink = `http://api.weatherstack.com/current?access_key=${api_key}&query=${countryObj.capital}`
+	
+	const weatherHook = () => {
+		console.log('effect')
+		axios
+			.get(weatherLink)
+			.then(response => {
+				console.log('promise fulfilled')
+				setWeather(response.data)
+			})
+	}
+	
+	useEffect(weatherHook, [])
+	console.log(weather['current'])
+	console.log(typeof weather['current'])
+	
+	// Extract relevant values from the json object
+	const temp = ((weather || {}).current || {}).temperature
+	const windSpeed = ((weather || {}).current || {}).wind_speed
+	const windDir = ((weather || {}).current || {}).wind_dir
+	const imgLink = weather && weather.current ? weather.current.weather_icons[0] : null
+	
+	return (
+		<div>
+			<h1>{countryObj.name}</h1>
+			<div>capital {countryObj.capital}</div>
+			<div>population {countryObj.population}</div>
+			<h2>Languages</h2>
+			<ul>
+				{countryObj.languages.map(language => 
+					<li key={language.iso639_2}>{language.name}</li>)}
+			</ul>
+			<img src={countryObj.flag} alt={`${countryObj.demonym} flag`} 
+				width="150" />
+			<h2>Weather in {countryObj.capital}</h2>
+			<div>
+				<strong>temperature: </strong>{temp} Celsius
+			</div>
+				<img src={imgLink} alt='Weather icon' 
+					width="70" />
+			<div>
+				<strong>wind: </strong>{windSpeed} kph direction {windDir}
+			</div>
+			<p></p>
+		</div>
+	)
+}
 
 const SearchResults = ({countriesToShow}) => {
 	const [ expanded, setExpanded ] = useState([])
@@ -95,7 +131,6 @@ const App = () => {
 	}
 	
 	useEffect(hook, [])
-	console.log(countries)
 	
 	const handleSearch = (event) => {
 		console.log(event.target.value)
