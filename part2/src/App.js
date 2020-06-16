@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-const Person = ({personObj}) => (<div>{personObj.name} {personObj.number}</div>)
+const Person = ({ personObj, handleDelete }) => (
+	<div>
+		{personObj.name} {personObj.number}
+		<button onClick={handleDelete} 
+			value={[personObj.id, personObj.name]}>delete</button>
+	</div>
+)
 
 const Filter = ({ searchTerm, handleSearch }) => (
 	<div>
@@ -73,6 +79,17 @@ const App = () => {
 		setSearchTerm(event.target.value)
 	}
 	
+	const handleDelete = (event) => {
+		const deletePerson = (event.target.value).split(",")
+		const id = deletePerson[0]
+		const name = deletePerson[1]
+		console.log(deletePerson)
+		if (window.confirm(`Delete ${name}?`)) {	
+			personService.delet(id)	
+			setPersons(persons.filter(person => person.id != id))
+		}
+	}
+	
 	const personsToShow = persons.filter(person => person.name.includes(searchTerm))
 		console.log(personsToShow)
 	
@@ -84,7 +101,7 @@ const App = () => {
 			<Form addPerson={addPerson} newName={newName} handlePerson={handlePerson} 
 				newNumber={newNumber} handleNumber={handleNumber}/>
 			<h2>Numbers</h2>
-				{personsToShow.map(person => <Person key={person.name} personObj={person} />)}
+				{personsToShow.map(person => <Person key={person.name} personObj={person} handleDelete={handleDelete}/>)}
 		</div>
 	)	
 }
