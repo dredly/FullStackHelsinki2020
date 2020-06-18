@@ -1,34 +1,19 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "898",
-      "id": 1
-    },
-    {
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
     },
     {
-      "name": "Joebob",
-      "number": "234",
-      "id": 6
+      "name": "Jordan W",
+      "number": "2789874",
+      "id": 13
     },
     {
-      "name": "Lucas A",
-      "number": "8984",
-      "id": 7
-    },
-    {
-      "name": "Miguel",
-      "number": "478987",
-      "id": 8
-    },
-    {
-      "name": "George Head",
-      "number": "123456789",
-      "id": 9
+      "name": "Igor P",
+      "number": "478",
+      "id": 14
     }
   ]
 }
