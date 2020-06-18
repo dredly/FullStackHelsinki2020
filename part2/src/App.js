@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import Notification from './components/Notification'
 import personService from './services/persons'
 
 const Person = ({ personObj, handleDelete }) => (
@@ -35,6 +36,7 @@ const App = () => {
 	const [ newNumber, setNewNumber ] = useState('')
 	const [ newName, setNewName ] = useState('')
 	const [ searchTerm, setSearchTerm ] = useState('')
+	const [ infoMessage, setInfoMessage ] = useState(null)
 	
 	useEffect(() => {
 		personService
@@ -56,9 +58,13 @@ const App = () => {
 			personService
 				.create(personObject)
 					.then(returnedPerson => {
+					setInfoMessage(`${newName} added`)
 					setPersons(persons.concat(returnedPerson))
 					setNewName('')
 					setNewNumber('')
+					setTimeout(() => {
+						setInfoMessage(null)
+					}, 4000)
 				})
 		}
 		else {
@@ -70,7 +76,11 @@ const App = () => {
 				personService
 					.changeNum(id, changedPerson)
 						.then(returnedPerson => {
-						setPersons(persons.map(person => person.id !== id ? person : returnedPerson))	
+						setInfoMessage(`${newName}s number changed to ${newNumber}`)
+						setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+						setTimeout(() => {
+							setInfoMessage(null)
+						}, 4000)						
 					})
 			}
 		}
@@ -108,6 +118,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={infoMessage} />
 			<Filter searchTerm={searchTerm} handleSearch={handleSearch} />
 			<h2>add a new</h2>
 			<Form addPerson={addPerson} newName={newName} handlePerson={handlePerson} 
