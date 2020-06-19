@@ -55,6 +55,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
 	const body = request.body
+	const nameList = persons.map(person => person.name)
 	
 	function getRandomInt(max) {
 		return Math.floor(Math.random() * Math.floor(max))
@@ -62,7 +63,13 @@ app.post('/api/persons', (request, response) => {
 	
 	if (!body.name || !body.number) {
 		return response.status(400).json({
-			error: 'content missing'
+			error: 'Make sure to enter a name and a number'
+		})
+	}
+	
+	if (nameList.includes(body.name)) {
+		return response.status(400).json({
+			error: 'Name must be unique'
 		})
 	}
 	
